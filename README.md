@@ -1,39 +1,50 @@
-#CoorsLightEngine
+# CoorsLightEngine
 
 Basic Game Engine project as student.
-#Library
+Currently in development!
 
--Qt, the editor
--GLFW for the context rendering
--Vulkan, Graphics api
--Bullet, Physics and collision detection
+# Library
+- Qt, the editor
+- GLFW for the context rendering
+- Vulkan, Graphics api
+- Bullet, Physics and collision detection
 
-#Features
-###Assets viewer
-![Capture](https://github.com/DanielHaselock/CustomGameEngine/assets/99834983/ba85b89d-1a6f-4a17-acfc-30a58c2d9174)
+# Features
+### Assets viewer
+![Capture](https://github.com/DanielHaselock/CustomGameEngine/assets/99834983/fbc186f7-8786-42ec-aea7-a95cc2c6948a)
 
-###Particle system (gif)
-![particleGif](https://github.com/DanielHaselock/CustomGameEngine/assets/99834983/eebcd881-25b7-4e66-9802-7f9c7c48555c)
 
-###Animation (gif)
-![Anim](https://github.com/DanielHaselock/CustomGameEngine/assets/99834983/c512e79f-2ec4-45aa-a955-9c939753c00e)
+### Particle system (gif)
+![particleGif](https://github.com/DanielHaselock/CustomGameEngine/assets/99834983/8657a76a-bbb4-45dd-9fea-9ac4dfd202aa)
 
-###Material system
-![Capture3](https://github.com/DanielHaselock/CustomGameEngine/assets/99834983/c9d6bcf8-13fd-494f-b742-bf0cd870edbe)
 
-###Decal system
+### Animation (gif)
+![Anim](https://github.com/DanielHaselock/CustomGameEngine/assets/99834983/fc8a9f13-53b0-4fe9-a02c-a63b6ebd1bd0)
 
-###Light and shadow, directional, point and spot
-![Light](https://github.com/DanielHaselock/CustomGameEngine/assets/99834983/33fe9d30-9c4c-44a5-ba48-7f8111f7edfc)
 
-###UI Capability
-![UI](https://github.com/DanielHaselock/CustomGameEngine/assets/99834983/21cf8a13-d8ec-45dc-bc7a-d87df903da32)
+### Material system
+![Capture3](https://github.com/DanielHaselock/CustomGameEngine/assets/99834983/52911e99-767d-41f3-aa99-d06312b97298)
 
-###Actor picking
-![itemPicking](https://github.com/DanielHaselock/CustomGameEngine/assets/99834983/e996cc71-936c-497a-bf75-f2c9cb546ca1)
 
-##Components
-![Capture4](https://github.com/DanielHaselock/CustomGameEngine/assets/99834983/52054d16-dd59-4316-a8cc-6f3c7e4b8993)
+### Decal system
+![Decal](https://github.com/DanielHaselock/CustomGameEngine/assets/99834983/0c2615f8-b381-40cf-a3ed-2e6306557245)
 
-##Docking system
-![Capture2](https://github.com/DanielHaselock/CustomGameEngine/assets/99834983/b8c46243-65c1-43a5-99ba-ba9e8f86422a)
+
+### Light and shadow, directional, point and spot
+![Light](https://github.com/DanielHaselock/CustomGameEngine/assets/99834983/7a286359-0e06-45a0-9bee-8c049831c1d5)
+
+
+### UI Capability
+![UI](https://github.com/DanielHaselock/CustomGameEngine/assets/99834983/ae61e8c3-90fe-4c8f-a899-006b51782c85)
+
+### Actor picking
+![itemPicking](https://github.com/DanielHaselock/CustomGameEngine/assets/99834983/fbf3b4c9-dc7c-447c-bd01-21a63e9ac413)
+
+
+### Lots of Component
+![Capture4](https://github.com/DanielHaselock/CustomGameEngine/assets/99834983/902f5ecd-e654-487e-84a8-ef4ccf96cf4e)
+
+
+### Docking system
+![Capture2](https://github.com/DanielHaselock/CustomGameEngine/assets/99834983/12253e5a-0038-4e99-9117-b31a42330da2)
+
