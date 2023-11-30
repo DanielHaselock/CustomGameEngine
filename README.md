@@ -1,7 +1,6 @@
 # CoorsLightEngine
 
 Basic Game Engine project as student.
-Currently in development!
 
 # Library
 - Qt, the editor
