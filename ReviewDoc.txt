@@ -1,0 +1,69 @@
+Organization
+------------
+Engine architecture	: Gabriel
+CMake 				: Gabriel
+Code Standard 		: Swann
+Git 				: Swann
+
+
+Libraries
+---------
+Mathematics library 		: Gabriel & Swann
+Mathematics library tests 	: Swann
+
+Library wrapping (RHI) : 
+{
+	Gabriel : Vulkan		| Assimp 	| stb_image | Freetype |irrklang 
+	Daniel  : Bullet  		| Lua & Sol | Animations 
+	Swann 	: Mathematics	| Lua & Sol
+}
+
+
+Engine
+------
+Rendering Engine 	: Gabriel
+Rendering Loop 		: Gabriel
+Resource Manager 	: Gabriel
+Service Locator 	: Gabriel
+Input Manager 		: Gabriel
+Scene Manager 		: Gabriel
+Scene Graph 		: Gabriel (Swann Mathematics)
+Game Loop 			: Gabriel (Swann tried a first iteration)
+Scripting Engine 	: Swann & Daniel
+Scripting Loop 		: Swann
+Physics Engine 		: Daniel
+In-Game UI 			: Gabriel
+Particle System 	: Gabriel
+Animation System 	: Gabriel & Daniel
+
+Scripting Behaviors : 
+{
+	Swann :
+		- Mathematiques
+		- Debug
+		- Actors core
+		- Transform
+		- Usage of relative paths for resources
+
+	Daniel :
+		- Actors
+		- Transform
+		- Model	
+		- Collider
+		- Tags
+		- Camera
+		- Other Scripts
+		- Sound
+		- UI
+		- Particle system
+		- Animations
+		- Wait Functions
+		- Delegate Physics
+		- Inputs
+		- Load scenes
+		- Raycast
+}
+
+-- Game
+
+First Game Prototype : 	Daniel

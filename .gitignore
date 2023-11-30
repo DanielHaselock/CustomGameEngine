@@ -1,0 +1,84 @@
+# Build -----------------------------------------------------------------------
+
+### Output and Cache Directories ###
+/External/
+/Docs/
+
+/build/
+/Build/
+/bin/
+/out/
+/cmake-build-*/
+
+# We want to version DLL as they are sometimes pre-deployed in isart projects
+# So we need to ignore everything in deployment folders except DLLs
+/Debug/*
+/Release/*
+/x64/*
+!*.dll
+
+# Exclude a bunch of other temporary directories
+*/x64
+*/Debug/
+*/Release/
+
+# Don't forget this or deployed DLLs won't be seen by Git
+!/x64/*
+!/Debug/*
+!/Release/*
+
+.vs
+
+### CMake ###
+CMakeCache.txt
+CMakeFiles
+CMakeScripts
+Makefile
+cmake_install.cmake
+install_manifest.txt
+
+# Language --------------------------------------------------------------------
+
+### C++ ###
+# Compiled Object files
+*.slo
+*.lo
+*.o
+*.ilk
+*.idb
+*.pdb
+*.ipdb
+*.log
+*.tlog
+*.lastbuildstate
+*.recipe
+*.vcxproj.FileListAbsolute.txt
+
+# Comment this line if you want to version Wavefront .obj files.
+#*.obj
+*.iobj
+
+# Compiled Dynamic libraries
+*.so
+*.dylib
+
+
+# Fortran module files
+*.mod
+
+# Compiled Static libraries
+*.lai
+*.la
+*.a
+
+# Don't ignore the libs vendored in the application !
+!Dependencies/**/*.lib
+!Dependencies/**/*.dll
+!Dependencies/**/*.so
+
+# Executables
+!vswhere.exe
+*.exe
+*.out
+*.app
+/Doc

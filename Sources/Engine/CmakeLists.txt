@@ -1,0 +1,360 @@
+message("
+╔═══╗───────────────╔╗─────────╔╗───╔╗
+║╔═╗║───────────────║║─────────║║──╔╝╚╗
+║║─╚╝╔══╗╔══╗╔═╗╔══╗║║───╔╗╔══╗║╚═╗╚╗╔╝
+║║─╔╗║╔╗║║╔╗║║╔╝║══╣║║─╔╗╠╣║╔╗║║╔╗║─║║ 
+║╚═╝║║╚╝║║╚╝║║║─╠══║║╚═╝║║║║╚╝║║║║║─║╚╗
+╚═══╝╚══╝╚══╝╚╝─╚══╝╚═══╝╚╝╚═╗║╚╝╚╝─╚═╝
+───────────────────────────╔═╝║        
+───────────────────────────╚══╝        
+")
+
+cmake_minimum_required(VERSION 3.23 FATAL_ERROR)
+
+set(CMAKE_CXX_STANDARD 17)
+set(MAIN_PROJECT_NAME Main)
+set(SOURCE_FOLDE src)
+set(INCLUDE_FOLDE include)
+set(DEPENDS_DIR ${CMAKE_CURRENT_SOURCE_DIR}/../../Dependencies)
+set(RESOURCES_DIR ${CMAKE_CURRENT_SOURCE_DIR}/../../Resources)
+set(APP_ICON_RESOURCE_WINDOWS ${MAIN_PROJECT_NAME}/appIcon.rc)
+set( THIRD_PARTY_DLLS
+   ${DEPENDS_DIR}/Qt6/bin/Qt6Core.dll
+   ${DEPENDS_DIR}/Qt6/bin/Qt6Gui.dll
+   ${DEPENDS_DIR}/Qt6/bin/Qt6Widgets.dll
+   ${DEPENDS_DIR}/Qtadvanceddocking/bin/qtadvanceddocking.dll
+   ${DEPENDS_DIR}/glfw/bin/glfw3.dll
+   ${DEPENDS_DIR}/assimp/bin/assimp-vc143-mt.dll
+   ${DEPENDS_DIR}/IrrKlang/bin/ikpMP3.dll
+   ${DEPENDS_DIR}/IrrKlang/bin/irrKlang.dll
+   ${DEPENDS_DIR}/FreeType/bin/freetype.dll
+)
+set( THIRD_PARTY_PROJECT
+   Editor
+   EngineCore
+   EngineWindow
+   Game
+   Maths
+   Rendering
+   Tools
+   Physics
+   Scripting
+   Sounds
+)
+
+set( THIRD_PARTY_INCLUDE
+   Qt6
+   Qtadvanceddocking
+   QTNodes
+   glfw
+   assimp
+   stb_image
+   VkBootstrap
+   VulkanMemoryAllocator
+   SPIRV-Relfect
+   Bullet
+   Lua
+   RapidJson
+   IrrKlang
+   FreeType
+)
+
+
+# Create shipping release config
+SET( CMAKE_CXX_FLAGS_SHIPPING "${CMAKE_CXX_FLAGS_RELEASE} -DSHIPPING /bigobj" CACHE STRING "Flags used by the C++ compiler during maintainer builds." FORCE )
+SET( CMAKE_C_FLAGS_SHIPPING "${CMAKE_C_FLAGS_RELEASE} -DSHIPPING /bigobj" CACHE STRING "Flags used by the C compiler during maintainer builds." FORCE )
+SET( CMAKE_EXE_LINKER_FLAGS_SHIPPING "${CMAKE_EXE_LINKER_FLAGS_RELEASE}" CACHE STRING "Flags used for linking binaries during maintainer builds." FORCE )
+SET( CMAKE_SHARED_LINKER_FLAGS_SHIPPING "${CMAKE_SHARED_LINKER_FLAGS_RELEASE}" CACHE STRING "Flags used by the shared libraries linker during maintainer builds." FORCE )
+# create Shipping config
+SET( CMAKE_CXX_FLAGS_SHIPPING_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -DSHIPPING /bigobj" CACHE STRING "Flags used by the C++ compiler during maintainer builds." FORCE )
+SET( CMAKE_C_FLAGS_SHIPPING_DEBUG "${CMAKE_C_FLAGS_DEBUG} -DSHIPPING /bigobj" CACHE STRING "Flags used by the C compiler during maintainer builds." FORCE )
+SET( CMAKE_EXE_LINKER_FLAGS_SHIPPING_DEBUG "${CMAKE_EXE_LINKER_FLAGS_DEBUG}" CACHE STRING "Flags used for linking binaries during maintainer builds." FORCE )
+SET( CMAKE_SHARED_LINKER_FLAGS_SHIPPING_DEBUG "${CMAKE_SHARED_LINKER_FLAGS_DEBUG}" CACHE STRING "Flags used by the shared libraries linker during maintainer builds." FORCE )
+#Define shipping macro
+string(APPEND CMAKE_C_FLAGS_DEBUG " -DNSHIPPING /bigobj")
+string(APPEND CMAKE_CXX_FLAGS_DEBUG " -DNSHIPPING /bigobj")
+string(APPEND CMAKE_C_FLAGS_RELEASE " -DNSHIPPING /bigobj")
+string(APPEND CMAKE_CXX_FLAGS_RELEASE " -DNSHIPPING /bigobj")
+
+
+set (CMAKE_CONFIGURATION_TYPES "Release;Debug;Shipping;Shipping_debug" CACHE STRING "Configurations" FORCE)
+
+
+project(Engine LANGUAGES CXX)
+
+add_compile_options(/Zc:__cplusplus)
+
+find_package(Vulkan REQUIRED COMPONENTS glslc)
+set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${DEPENDS_DIR}/CMake)
+include_directories(${MAIN_PROJECT_NAME} PRIVATE ${Vulkan_INCLUDE_DIRS})
+
+foreach( project_i ${THIRD_PARTY_PROJECT})
+	add_subdirectory(${project_i})
+	include_directories(${MAIN_PROJECT_NAME} PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/${project_i}/${INCLUDE_FOLDE})
+endforeach( project_i )
+
+add_subdirectory(MathsTesting)
+
+foreach( include_i ${THIRD_PARTY_INCLUDE})
+	include_directories(${MAIN_PROJECT_NAME} PRIVATE ${DEPENDS_DIR}/${include_i}/${INCLUDE_FOLDE})
+endforeach( include_i )
+
+
+set(PROJECT_SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/${MAIN_PROJECT_NAME}/${SOURCE_FOLDE})
+file(GLOB_RECURSE SOURCE_FILES 
+	${PROJECT_SOURCE_DIR}/*.c
+	${DEPENDS_DIR}/SPIRV-Relfect/${INCLUDE_FOLDE}/spirv_reflect.cpp
+	${PROJECT_SOURCE_DIR}/*.cc
+	${PROJECT_SOURCE_DIR}/*.cpp
+	${PROJECT_SOURCE_DIR}/*.cxx
+	${PROJECT_SOURCE_DIR}/*.c++)
+
+set(PROJECT_INCLUDE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/${MAIN_PROJECT_NAME}/${INCLUDE_FOLDE})
+file(GLOB_RECURSE HEADER_FILES 
+	${PROJECT_INCLUDE_DIR}/*.h
+	${PROJECT_INCLUDE_DIR}/*.hpp
+	${PROJECT_INCLUDE_DIR}/*.inl)
+
+add_executable(${MAIN_PROJECT_NAME} ${HEADER_FILES} ${SOURCE_FILES} ${APP_ICON_RESOURCE_WINDOWS})
+
+target_include_directories(${MAIN_PROJECT_NAME} PRIVATE ${PROJECT_INCLUDE_DIR})
+target_include_directories(${MAIN_PROJECT_NAME} PRIVATE ${DEPENDS_DIR}/QTNodes/${INCLUDE_FOLDE}/QtNodes/internal)
+target_link_libraries(${MAIN_PROJECT_NAME} PRIVATE ${THIRD_PARTY_PROJECT})
+
+set_property(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR} PROPERTY VS_STARTUP_PROJECT ${MAIN_PROJECT_NAME})
+set_target_properties(${MAIN_PROJECT_NAME} PROPERTIES VS_DEBUGGER_WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/$(Configuration))
+
+
+#Copy resources Folder
+add_custom_command(TARGET ${MAIN_PROJECT_NAME} POST_BUILD
+    COMMAND ${CMAKE_COMMAND} -E copy_directory
+		${RESOURCES_DIR}
+        $<TARGET_FILE_DIR:${MAIN_PROJECT_NAME}>/Resources)
+		
+#Copy dll
+foreach( file_i ${THIRD_PARTY_DLLS})
+    add_custom_command(TARGET ${MAIN_PROJECT_NAME} POST_BUILD
+		COMMAND ${CMAKE_COMMAND} -E copy
+			${file_i}
+			$<TARGET_FILE_DIR:${MAIN_PROJECT_NAME}>)
+endforeach( file_i )
+
+#Copy Qt6 plugin
+add_custom_command(TARGET ${MAIN_PROJECT_NAME} POST_BUILD
+    COMMAND ${CMAKE_COMMAND} -E copy_directory
+		${DEPENDS_DIR}/Qt6/plugins
+        $<TARGET_FILE_DIR:${MAIN_PROJECT_NAME}>/plugins)
+
+#Copy lua dll
+add_custom_command(TARGET ${MAIN_PROJECT_NAME} POST_BUILD
+	COMMAND ${CMAKE_COMMAND} -E copy_directory
+		${DEPENDS_DIR}/Lua/bin
+		$<TARGET_FILE_DIR:${MAIN_PROJECT_NAME}>)
+
+
+#look for shader
+file(GLOB_RECURSE TARGET_SHADER_FILES #any name for extentions --> choice 
+	${RESOURCES_DIR}/*.vert
+	${RESOURCES_DIR}/*.frag
+	${RESOURCES_DIR}/*.geom
+	${RESOURCES_DIR}/*.tesc
+	${RESOURCES_DIR}/*.tese
+	${RESOURCES_DIR}/*.comp
+	${RESOURCES_DIR}/*.glsl)
+
+#Add raw file to main with filter
+source_group(Shaders FILES ${TARGET_SHADER_FILES})
+target_sources(${MAIN_PROJECT_NAME} PRIVATE ${TARGET_SHADER_FILES})
+
+#shader compilation
+set(SHADER_BINARIES_DIR ${CMAKE_BINARY_DIR}/$(Configuration))
+foreach(SHADER_FILE IN LISTS TARGET_SHADER_FILES)
+	string(REPLACE ${CMAKE_CURRENT_SOURCE_DIR} ${SHADER_BINARIES_DIR} SHADER_BINARY ${SHADER_FILE})
+	string(REPLACE ../../ "" SHADER_BINARY_A ${SHADER_BINARY})
+	set(SHADER_BINARY ${SHADER_BINARY_A}.spv)
+	#generate matching folder hierachy inside the bin directory for the compiled shaders 
+	get_filename_component(SHADER_BINARY_DIR ${SHADER_BINARY} DIRECTORY)
+	file(MAKE_DIRECTORY ${SHADER_BINARY_DIR})
+	add_custom_command(
+		#file to produce
+		OUTPUT ${SHADER_BINARY}
+		#compile shader using glslc
+		COMMAND ${Vulkan_GLSLC_EXECUTABLE} "${SHADER_FILE}" -o "${SHADER_BINARY}"
+		#run command if the following file change or output is missing
+		DEPENDS ${SHADER_FILE}
+		VERBATIM #OS convention is respected (linux \ and windows /)
+		)
+	set(SHADER_BINARIES ${SHADER_BINARIES} ${SHADER_BINARY})
+endforeach()
+
+set(SHADER_TARGET_NAME ${MAIN_PROJECT_NAME}_shader)
+add_custom_target(${SHADER_TARGET_NAME} DEPENDS ${SHADER_BINARIES})
+
+add_dependencies(${MAIN_PROJECT_NAME} ${SHADER_TARGET_NAME})
+
+# Generate lib in shipping mode
+string(
+    APPEND _cmd
+    "$<IF:$<CONFIG:Debug>,"
+        "${CMAKE_COMMAND};--build;.;--target;Main;--config;Shipping,"
+		"$<IF:$<CONFIG:Release>,"
+		"${CMAKE_COMMAND};--build;.;--target;Main;--config;Shipping,"
+        "${CMAKE_COMMAND};-E;echo_append"
+    ">>")
+add_custom_command(TARGET ${MAIN_PROJECT_NAME} PRE_BUILD
+	 COMMAND "${_cmd}"
+	 COMMAND_EXPAND_LISTS)
+foreach( file_i ${THIRD_PARTY_PROJECT})
+	if (NOT ${file_i} STREQUAL "Editor")
+		add_custom_command(TARGET ${MAIN_PROJECT_NAME} POST_BUILD
+			COMMAND ${CMAKE_COMMAND} -E copy
+				${CMAKE_BINARY_DIR}/${file_i}/Shipping/${file_i}.lib
+				$<TARGET_FILE_DIR:${MAIN_PROJECT_NAME}>/Resources/Editor/Build/libs/${file_i}.lib)
+	endif (NOT ${file_i} STREQUAL "Editor")
+endforeach( file_i )
+#Assimp to build
+add_custom_command(TARGET ${MAIN_PROJECT_NAME} POST_BUILD
+		COMMAND ${CMAKE_COMMAND} -E copy_directory
+		${DEPENDS_DIR}/assimp/lib/
+		$<TARGET_FILE_DIR:${MAIN_PROJECT_NAME}>/Resources/Editor/Build/libs/)
+add_custom_command(TARGET ${MAIN_PROJECT_NAME} POST_BUILD
+	COMMAND ${CMAKE_COMMAND} -E copy_directory
+		${DEPENDS_DIR}/assimp/include/
+		$<TARGET_FILE_DIR:${MAIN_PROJECT_NAME}>/Resources/Editor/Build/include/)
+add_custom_command(TARGET ${MAIN_PROJECT_NAME} POST_BUILD
+	     COMMAND ${CMAKE_COMMAND} -E copy
+		 ${DEPENDS_DIR}/assimp/bin/assimp-vc143-mt.dll
+		 $<TARGET_FILE_DIR:${MAIN_PROJECT_NAME}>/Resources/Editor/Build/bin/assimp-vc143-mt.dll)
+add_custom_command(TARGET ${MAIN_PROJECT_NAME} POST_BUILD
+	     COMMAND ${CMAKE_COMMAND} -E copy
+		 ${DEPENDS_DIR}/assimp/bin/assimp-vc143-mt.dll
+		 $<TARGET_FILE_DIR:${MAIN_PROJECT_NAME}>/Resources/Editor/Build/bin/assimp-vc142-mt.dll)
+#-----------------------------
+#Bullet
+ add_custom_command(TARGET ${MAIN_PROJECT_NAME} POST_BUILD
+		 COMMAND ${CMAKE_COMMAND} -E copy
+		 ${DEPENDS_DIR}/Bullet/lib/release/BulletCollision.lib
+		 $<TARGET_FILE_DIR:${MAIN_PROJECT_NAME}>/Resources/Editor/Build/libs/BulletCollision.lib)
+ add_custom_command(TARGET ${MAIN_PROJECT_NAME} POST_BUILD
+		 COMMAND ${CMAKE_COMMAND} -E copy
+		 ${DEPENDS_DIR}/Bullet/lib/release/BulletDynamics.lib
+		 $<TARGET_FILE_DIR:${MAIN_PROJECT_NAME}>/Resources/Editor/Build/libs/BulletDynamics.lib)
+ add_custom_command(TARGET ${MAIN_PROJECT_NAME} POST_BUILD
+		 COMMAND ${CMAKE_COMMAND} -E copy
+		 ${DEPENDS_DIR}/Bullet/lib/release/LinearMath.lib
+		 $<TARGET_FILE_DIR:${MAIN_PROJECT_NAME}>/Resources/Editor/Build/libs/LinearMath.lib)
+ add_custom_command(TARGET ${MAIN_PROJECT_NAME} POST_BUILD
+	     COMMAND ${CMAKE_COMMAND} -E copy_directory
+		 ${DEPENDS_DIR}/Bullet/include/
+		 $<TARGET_FILE_DIR:${MAIN_PROJECT_NAME}>/Resources/Editor/Build/include/)
+#-----------------------------
+#GLFW
+ add_custom_command(TARGET ${MAIN_PROJECT_NAME} POST_BUILD
+		COMMAND ${CMAKE_COMMAND} -E copy
+		${DEPENDS_DIR}/glfw/lib/glfw3dll.lib
+		$<TARGET_FILE_DIR:${MAIN_PROJECT_NAME}>/Resources/Editor/Build/libs/glfw3dll.lib)
+ add_custom_command(TARGET ${MAIN_PROJECT_NAME} POST_BUILD
+	     COMMAND ${CMAKE_COMMAND} -E copy_directory
+		 ${DEPENDS_DIR}/glfw/include/
+		 $<TARGET_FILE_DIR:${MAIN_PROJECT_NAME}>/Resources/Editor/Build/include/)
+ add_custom_command(TARGET ${MAIN_PROJECT_NAME} POST_BUILD
+	     COMMAND ${CMAKE_COMMAND} -E copy
+		 ${DEPENDS_DIR}/glfw/bin/glfw3.dll
+		 $<TARGET_FILE_DIR:${MAIN_PROJECT_NAME}>/Resources/Editor/Build/bin/glfw3.dll)
+#-----------------------------
+#Spirv
+ add_custom_command(TARGET ${MAIN_PROJECT_NAME} POST_BUILD
+	     COMMAND ${CMAKE_COMMAND} -E copy_directory
+		 ${DEPENDS_DIR}/SPIRV-Relfect/include/
+		 $<TARGET_FILE_DIR:${MAIN_PROJECT_NAME}>/Resources/Editor/Build/include/)
+#-----------------------------
+#stb_image
+ add_custom_command(TARGET ${MAIN_PROJECT_NAME} POST_BUILD
+	     COMMAND ${CMAKE_COMMAND} -E copy_directory
+		 ${DEPENDS_DIR}/stb_image/include/
+		 $<TARGET_FILE_DIR:${MAIN_PROJECT_NAME}>/Resources/Editor/Build/include/)
+#-----------------------------
+#VkBoostrap
+ add_custom_command(TARGET ${MAIN_PROJECT_NAME} POST_BUILD
+		COMMAND ${CMAKE_COMMAND} -E copy
+		${DEPENDS_DIR}/VkBootstrap/lib/Rvk-bootstrap.lib
+		$<TARGET_FILE_DIR:${MAIN_PROJECT_NAME}>/Resources/Editor/Build/libs/Rvk-bootstrap.lib)
+ add_custom_command(TARGET ${MAIN_PROJECT_NAME} POST_BUILD
+	     COMMAND ${CMAKE_COMMAND} -E copy_directory
+		 ${DEPENDS_DIR}/VkBootstrap/include/
+		 $<TARGET_FILE_DIR:${MAIN_PROJECT_NAME}>/Resources/Editor/Build/include/)
+#-----------------------------
+#VulkanMemoryAllocator
+ add_custom_command(TARGET ${MAIN_PROJECT_NAME} POST_BUILD
+		COMMAND ${CMAKE_COMMAND} -E copy
+		${DEPENDS_DIR}/VulkanMemoryAllocator/lib/VulkanMemoryAllocator.lib
+		$<TARGET_FILE_DIR:${MAIN_PROJECT_NAME}>/Resources/Editor/Build/libs/VulkanMemoryAllocator.lib)
+ add_custom_command(TARGET ${MAIN_PROJECT_NAME} POST_BUILD
+	     COMMAND ${CMAKE_COMMAND} -E copy_directory
+		 ${DEPENDS_DIR}/VulkanMemoryAllocator/include/
+		 $<TARGET_FILE_DIR:${MAIN_PROJECT_NAME}>/Resources/Editor/Build/include/)
+#-----------------------------
+#Lua
+ add_custom_command(TARGET ${MAIN_PROJECT_NAME} POST_BUILD
+		COMMAND ${CMAKE_COMMAND} -E copy
+		${DEPENDS_DIR}/Lua/lib/liblua53.lib
+		$<TARGET_FILE_DIR:${MAIN_PROJECT_NAME}>/Resources/Editor/Build/libs/liblua53.lib)
+ add_custom_command(TARGET ${MAIN_PROJECT_NAME} POST_BUILD
+	     COMMAND ${CMAKE_COMMAND} -E copy_directory
+		 ${DEPENDS_DIR}/Lua/include/
+		 $<TARGET_FILE_DIR:${MAIN_PROJECT_NAME}>/Resources/Editor/Build/include/)
+ add_custom_command(TARGET ${MAIN_PROJECT_NAME} POST_BUILD
+	     COMMAND ${CMAKE_COMMAND} -E copy
+		 ${DEPENDS_DIR}/Lua/bin/lua53.dll
+		 $<TARGET_FILE_DIR:${MAIN_PROJECT_NAME}>/Resources/Editor/Build/bin/lua53.dll)
+#-----------------------------
+#RapidJson
+ add_custom_command(TARGET ${MAIN_PROJECT_NAME} POST_BUILD
+	     COMMAND ${CMAKE_COMMAND} -E copy_directory
+		 ${DEPENDS_DIR}/RapidJson/include/
+		 $<TARGET_FILE_DIR:${MAIN_PROJECT_NAME}>/Resources/Editor/Build/include/)
+#----------------------------- 
+#Irrklang
+add_custom_command(TARGET ${MAIN_PROJECT_NAME} POST_BUILD
+        COMMAND ${CMAKE_COMMAND} -E copy
+        ${DEPENDS_DIR}/IrrKlang/lib/irrKlang.lib
+        $<TARGET_FILE_DIR:${MAIN_PROJECT_NAME}>/Resources/Editor/Build/libs/irrKlang.lib)
+ add_custom_command(TARGET ${MAIN_PROJECT_NAME} POST_BUILD
+         COMMAND ${CMAKE_COMMAND} -E copy_directory
+         ${DEPENDS_DIR}/IrrKlang/include/
+         $<TARGET_FILE_DIR:${MAIN_PROJECT_NAME}>/Resources/Editor/Build/include/)
+add_custom_command(TARGET ${MAIN_PROJECT_NAME} POST_BUILD
+         COMMAND ${CMAKE_COMMAND} -E copy
+         ${DEPENDS_DIR}/IrrKlang/bin/IrrKlang.dll
+         $<TARGET_FILE_DIR:${MAIN_PROJECT_NAME}>/Resources/Editor/Build/bin/ikpMP3.dll)
+add_custom_command(TARGET ${MAIN_PROJECT_NAME} POST_BUILD
+         COMMAND ${CMAKE_COMMAND} -E copy
+         ${DEPENDS_DIR}/IrrKlang/bin/irrKlang.dll
+         $<TARGET_FILE_DIR:${MAIN_PROJECT_NAME}>/Resources/Editor/Build/bin/irrKlang.dll)
+#----------------------------- 
+#FreeType
+add_custom_command(TARGET ${MAIN_PROJECT_NAME} POST_BUILD
+        COMMAND ${CMAKE_COMMAND} -E copy
+        ${DEPENDS_DIR}/FreeType/lib/freetype.lib
+        $<TARGET_FILE_DIR:${MAIN_PROJECT_NAME}>/Resources/Editor/Build/libs/freetype.lib)
+add_custom_command(TARGET ${MAIN_PROJECT_NAME} POST_BUILD
+         COMMAND ${CMAKE_COMMAND} -E copy_directory
+         ${DEPENDS_DIR}/FreeType/include/
+         $<TARGET_FILE_DIR:${MAIN_PROJECT_NAME}>/Resources/Editor/Build/include/)
+add_custom_command(TARGET ${MAIN_PROJECT_NAME} POST_BUILD
+         COMMAND ${CMAKE_COMMAND} -E copy
+         ${DEPENDS_DIR}/FreeType/bin/freetype.dll
+         $<TARGET_FILE_DIR:${MAIN_PROJECT_NAME}>/Resources/Editor/Build/bin/freetype.dll)
+#-----------------------------
+#Copy resources
+ add_custom_command(TARGET ${MAIN_PROJECT_NAME} POST_BUILD
+	     COMMAND ${CMAKE_COMMAND} -E copy_directory
+		 $<TARGET_FILE_DIR:${MAIN_PROJECT_NAME}>/Resources/Engine
+		 $<TARGET_FILE_DIR:${MAIN_PROJECT_NAME}>/Resources/Editor/Build/Resources/Engine/)
+#-----------------------------
+#Copy Main
+ add_custom_command(TARGET ${MAIN_PROJECT_NAME} POST_BUILD
+	     COMMAND ${CMAKE_COMMAND} -E copy
+		 ${PROJECT_SOURCE_DIR}/main.cpp
+		 $<TARGET_FILE_DIR:${MAIN_PROJECT_NAME}>/Resources/Editor/Build/main.cpp)
+		 

@@ -1,0 +1,31 @@
+{
+    "Result": {
+        "DefaultTexture": true,
+        "HasTexture": true,
+        "TextureAlbedo": "Resources/Engine/Textures/default.png",
+        "TextureNormal": "",
+        "TextureMetallic": "",
+        "TextureRoughness": "",
+        "TextureAO": "",
+        "color": [
+            0,
+            0,
+            0,
+            255
+        ]
+    },
+    "connections": [
+    ],
+    "nodes": [
+        {
+            "id": 0,
+            "internal-data": {
+                "model-name": "MaterialResult"
+            },
+            "position": {
+                "x": -53,
+                "y": -116
+            }
+        }
+    ]
+}
